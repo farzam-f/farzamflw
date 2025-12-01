@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebCraft Academy - آموزش رایگان برنامه‌نویسی وب</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-blue: #4361ee;
+            --secondary-blue: #3a0ca3;
+            --purple: #7209b7;
+            --light-purple: #9d4edd;
+            --white: #ffffff;
+            --light-bg: #f8f9fa;
+            --dark-text: #2b2d42;
+            --gradient: linear-gradient(135deg, var(--primary-blue), var(--purple));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            padding-top: 50px; /* فاصله برای نوار بالایی */
+        }
+        
+        /* نوار بالایی برای نمایش نام کاربر */
+        .user-bar {
+            background: var(--gradient);
+            color: white;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            z-index: 2000;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(67, 97, 238, 0.2);
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .user-bar span {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            font-size: 1.1rem;
+        }
+        
+        .user-bar i {
+            margin-left: 10px;
+        }
+        
+        /* انیمیشن‌های سفارشی */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes gradientShift {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes slideInDown {
+            from {
+                transform: translateY(-100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+        
+        /* استایل‌های اصلی */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* نوار ناوبری */
+        header {
+            background-color: var(--white);
+            box-shadow: 0 4px 20px rgba(67, 97, 238, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 50px; /* شروع از زیر نوار کاربر */
+            z-index: 1000;
+            animation: fadeInUp 0.8s ease-out;
+            transition: all 0.3s ease;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            background-size: 200% 200%;
+            animation: gradientShift 5s ease infinite;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo i {
+            margin-left: 10px;
+            font-size: 1.8rem;
+        }
+        
+        .logo-text {
+            display: inline-block;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-right: 20px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-text);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 5px 0;
+            font-size: 0.95rem;
+        }
+        
+        .nav-links a:hover {
+            color: var(--primary-blue);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient);
+            transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+            left: 0;
+        }
+        
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary-blue);
+            background: none;
+            border: none;
+        }
+        
+        /* بخش هیرو */
+        .hero {
+            padding: 160px 0 80px; /* کاهش padding برای موبایل */
+            background: var(--light-bg);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            right: -20%;
+            width: 400px; /* کوچکتر برای موبایل */
+            height: 400px;
+            background: radial-gradient(circle, rgba(67, 97, 238, 0.1) 0%, rgba(255, 255, 255, 0) 70%);
+            border-radius: 50%;
+            z-index: 0;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+            flex-wrap: wrap; /* برای موبایل */
+        }
+        
+        .hero-text {
+            flex: 1;
+            min-width: 300px; /* حداقل عرض برای موبایل */
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+        
+        .hero-text h1 {
+            font-size: 2.5rem; /* کوچکتر برای موبایل */
+            margin-bottom: 20px;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            line-height: 1.3;
+        }
+        
+        .hero-text p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            color: #555;
+            max-width: 100%;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 14px 30px;
+            background: var(--gradient);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 20px rgba(67, 97, 238, 0.2);
+            animation: pulse 2s infinite;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(67, 97, 238, 0.3);
+            animation: none;
+        }
+        
+        .hero-image {
+            flex: 1;
+            text-align: center;
+            animation: fadeInUp 1s ease-out 0.5s both;
+            min-width: 300px;
+            margin-top: 40px; /* فاصله در موبایل */
+        }
+        
+        .hero-image svg {
+            max-width: 100%;
+            height: auto;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 20px 30px rgba(67, 97, 238, 0.2));
+        }
+        
+        /* بخش تکنولوژی‌ها */
+        .technologies {
+            padding: 80px 0;
+            background-color: var(--white);
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2rem; /* کوچکتر برای موبایل */
+            color: var(--dark-text);
+            position: relative;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -15px;
+            right: 50%;
+            transform: translateX(50%);
+            width: 60px;
+            height: 4px;
+            background: var(--gradient);
+            border-radius: 2px;
+        }
+        
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+        
+        .tech-card {
+            background: var(--white);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(67, 97, 238, 0.1);
+        }
+        
+        .tech-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.15);
+        }
+        
+        .tech-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        
+        .html-icon {
+            color: #e34f26;
+        }
+        
+        .css-icon {
+            color: #1572b6;
+        }
+        
+        .js-icon {
+            color: #f7df1e;
+        }
+        
+        .react-icon {
+            color: #61dafb;
+        }
+        
+        .tech-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            color: var(--dark-text);
+        }
+        
+        .tech-card p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+        
+        /* بخش دوره‌ها */
+        .courses {
+            padding: 80px 0;
+            background-color: var(--light-bg);
+        }
+        
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .course-card {
+            background: var(--white);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05);
+            transition: all 0.4s ease;
+        }
+        
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(67, 97, 238, 0.15);
+        }
+        
+        .course-header {
+            padding: 20px;
+            background: var(--gradient);
+            color: var(--white);
+        }
+        
+        .course-header h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+        
+        .course-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+        
+        .course-body {
+            padding: 20px;
+        }
+        
+        .course-body ul {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+        
+        .course-body li {
+            padding: 7px 0;
+            border-bottom: 1px solid #eee;
+            position: relative;
+            padding-right: 22px;
+            font-size: 0.95rem;
+        }
+        
+        .course-body li:before {
+            content: '✓';
+            position: absolute;
+            right: 0;
+            color: var(--primary-blue);
+            font-weight: bold;
+        }
+        
+        .details-button {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: var(--gradient);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+        
+        .details-button:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+        }
+        
+        /* مودال دوره‌ها */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 2000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        
+        .modal {
+            background: var(--white);
+            border-radius: 15px;
+            width: 95%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalFadeIn 0.4s ease-out;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .modal-header {
+            padding: 20px 25px;
+            background: var(--gradient);
+            color: var(--white);
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .modal-header h2 {
+            font-size: 1.5rem;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: var(--white);
+            font-size: 1.8rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+        
+        .modal-content {
+            padding: 25px;
+        }
+        
+        .lesson-list {
+            display: grid;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .lesson-item {
+            background: var(--light-bg);
+            border-radius: 10px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .lesson-item:hover {
+            border-color: var(--primary-blue);
+            transform: translateX(-5px);
+        }
+        
+        .lesson-item h4 {
+            color: var(--dark-text);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1.1rem;
+            flex-wrap: wrap;
+        }
+        
+        .lesson-item h4 span {
+            background: var(--primary-blue);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+        
+        .lesson-detail {
+            display: none;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 2px solid var(--light-bg);
+        }
+        
+        .lesson-detail.active {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .back-to-lessons {
+            background: none;
+            border: none;
+            color: var(--primary-blue);
+            cursor: pointer;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 0;
+        }
+        
+        .lesson-content {
+            line-height: 1.7;
+        }
+        
+        .lesson-content h3 {
+            color: var(--purple);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+        
+        .lesson-content p {
+            margin-bottom: 15px;
+            color: #555;
+            font-size: 1rem;
+        }
+        
+        .lesson-content ul, .lesson-content ol {
+            margin-right: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .code-block {
+            background: #2b2d42;
+            color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-size: 0.9rem;
+        }
+        
+        /* فوتر */
+        footer {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 60px 0 25px;
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+        }
+        
+        .footer-column {
+            flex: 1;
+            min-width: 250px;
+            margin-bottom: 25px;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+        
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--white);
+        }
+        
+        .footer-column p, .footer-column a {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+            display: block;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+        
+        .footer-column a:hover {
+            color: var(--white);
+            padding-right: 5px;
+        }
+        
+        .social-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        
+        .social-icons a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .social-icons a:hover {
+            background: var(--white);
+            color: var(--primary-blue);
+            transform: translateY(-3px);
+        }
+        
+        .copyright {
+            text-align: center;
+            padding-top: 25px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.85rem;
+        }
+        
+        /* بهبودهای ریسپانسیو */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .hero-text {
+                order: 1;
+            }
+            
+            .hero-image {
+                order: 2;
+                margin-top: 30px;
+            }
+            
+            .nav-links {
+                display: none;
+                position: fixed;
+                top: 110px; /* زیر هدر و نوار کاربر */
+                right: 0;
+                width: 100%;
+                background: var(--white);
+                flex-direction: column;
+                padding: 20px;
+                box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+                max-height: calc(100vh - 110px);
+                overflow-y: auto;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 12px 0;
+                text-align: center;
+                width: 100%;
+            }
+            
+            .nav-links a {
+                display: block;
+                padding: 12px;
+                font-size: 1.1rem;
+            }
+            
+            .menu-toggle {
+                display: block;
+            }
+            
+            .logo-text {
+                display: none; /* مخفی کردن متن لوگو در موبایل */
+            }
+            
+            .logo i {
+                margin-left: 0;
+                font-size: 2rem;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding-top: 45px;
+            }
+            
+            .user-bar {
+                height: 45px;
+                font-size: 0.9rem;
+                padding: 8px 0;
+            }
+            
+            header {
+                top: 45px;
+            }
+            
+            .hero {
+                padding: 130px 0 60px;
+            }
+            
+            .hero-text h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-text p {
+                font-size: 1rem;
+            }
+            
+            .section-title {
+                font-size: 1.7rem;
+            }
+            
+            .tech-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            }
+            
+            .tech-card {
+                padding: 20px 15px;
+            }
+            
+            .tech-icon {
+                font-size: 2.5rem;
+            }
+            
+            .course-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer-column {
+                min-width: 100%;
+            }
+            
+            .modal-header h2 {
+                font-size: 1.3rem;
+            }
+            
+            .lesson-item h4 {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+            
+            .cta-button {
+                padding: 12px 25px;
+                font-size: 0.95rem;
+                width: 100%;
+                text-align: center;
+            }
+            
+            .tech-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .container {
+                width: 95%;
+                padding: 0 15px;
+            }
+            
+            .modal {
+                width: 100%;
+                max-height: 95vh;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .code-block {
+                font-size: 0.8rem;
+                padding: 12px;
+            }
+        }
+        
+        /* برای جلوگیری از ناوبری ناخواسته در موبایل */
+        @media (hover: none) and (pointer: coarse) {
+            .tech-card:hover,
+            .course-card:hover,
+            .lesson-item:hover {
+                transform: none;
+            }
+            
+            .nav-links a::after {
+                display: none;
+            }
+            
+            .details-button:hover,
+            .cta-button:hover {
+                transform: none;
+                animation: none;
+            }
+        }
+        
+        /* تنظیمات برای تبلت‌های کوچک */
+        @media (min-width: 481px) and (max-width: 768px) {
+            .hero-content {
+                flex-direction: row;
+                text-align: right;
+            }
+            
+            .hero-text {
+                flex: 1;
+                min-width: auto;
+            }
+            
+            .hero-image {
+                flex: 1;
+                margin-top: 0;
+                min-width: auto;
+            }
+            
+            .hero-text h1 {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* تنظیمات برای لپتاپ‌های کوچک */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .hero-text h1 {
+                font-size: 2.3rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+        
+        /* پشتیبانی از حالت landscape موبایل */
+        @media (max-height: 500px) and (orientation: landscape) {
+            .hero {
+                padding: 100px 0 50px;
+            }
+            
+            .hero-text h1 {
+                font-size: 1.8rem;
+                margin-bottom: 15px;
+            }
+            
+            .modal {
+                max-height: 85vh;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- نوار بالایی برای نمایش نام کاربر -->
+    <div class="user-bar">
+        <span><i class="fas fa-user-graduate"></i> فرزام شیران جنگ</span>
+    </div>
+
+    <!-- هدر و ناوبری -->
+    <header>
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">
+                    <i class="fas fa-code"></i>
+                    <span class="logo-text">WebCraft Academy</span>
+                </a>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home">خانه</a></li>
+                    <li><a href="#tech">تکنولوژی‌ها</a></li>
+                    <li><a href="#courses">دوره‌های رایگان</a></li>
+                    <li><a href="#about">درباره ما</a></li>
+                    <li><a href="#contact">تماس</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- بخش اصلی -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>یادگیری رایگان برنامه‌نویسی وب از صفر</h1>
+                    <p>در آکادمی WebCraft، به صورت کاملاً رایگان هنر برنامه‌نویسی وب را از پایه تا پیشرفته فرا بگیرید. با پروژه‌های عملی و آموزش‌های گام به گام، مسیر تبدیل شدن به یک توسعه‌دهنده وب حرفه‌ای را طی کنید.</p>
+                    <a href="#courses" class="cta-button">شروع یادگیری رایگان <i class="fas fa-arrow-left"></i></a>
+                </div>
+                <div class="hero-image">
+                    <svg width="350" height="260" viewBox="0 0 350 260" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="40" y="40" width="270" height="180" rx="10" fill="var(--white)" stroke="var(--primary-blue)" stroke-width="2"/>
+                        <circle cx="70" cy="60" r="7" fill="#ff5f57"/>
+                        <circle cx="95" cy="60" r="7" fill="#ffbd2e"/>
+                        <circle cx="120" cy="60" r="7" fill="#28ca42"/>
+                        <rect x="50" y="90" width="110" height="13" rx="5" fill="var(--primary-blue)" opacity="0.7"/>
+                        <rect x="50" y="115" width="180" height="13" rx="5" fill="var(--purple)" opacity="0.7"/>
+                        <rect x="50" y="140" width="140" height="13" rx="5" fill="var(--secondary-blue)" opacity="0.7"/>
+                        <rect x="50" y="165" width="220" height="13" rx="5" fill="var(--primary-blue)" opacity="0.7"/>
+                        <rect x="180" y="90" width="70" height="70" rx="8" fill="var(--light-purple)" opacity="0.2" stroke="var(--purple)" stroke-width="2"/>
+                        <text x="190" y="120" font-family="Arial" font-size="12" fill="var(--purple)">CSS</text>
+                        <text x="190" y="145" font-family="Arial" font-size="12" fill="var(--purple)">JS</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش تکنولوژی‌ها -->
+    <section class="technologies" id="tech">
+        <div class="container">
+            <h2 class="section-title">تکنولوژی‌هایی که آموزش می‌دهیم</h2>
+            <div class="tech-grid">
+                <div class="tech-card">
+                    <div class="tech-icon html-icon">
+                        <i class="fab fa-html5"></i>
+                    </div>
+                    <h3>HTML5</h3>
+                    <p>پایه و اساس هر وبسایت. ساختار معنایی و استانداردهای مدرن HTML5 را کامل یاد بگیرید.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon css-icon">
+                        <i class="fab fa-css3-alt"></i>
+                    </div>
+                    <h3>CSS3</h3>
+                    <p>زیباسازی وبسایت‌ها با جدیدترین ویژگی‌های CSS از جمله Flexbox، Grid و انیمیشن‌ها.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon js-icon">
+                        <i class="fab fa-js-square"></i>
+                    </div>
+                    <h3>JavaScript</h3>
+                    <p>زبان برنامه‌نویسی وب. از مبانی تا پیشرفته با پروژه‌های عملی و جذاب.</p>
+                </div>
+                <div class="tech-card">
+                    <div class="tech-icon react-icon">
+                        <i class="fab fa-react"></i>
+                    </div>
+                    <h3>React.js</h3>
+                    <p>کتابخانه محبوب فرانت‌اند برای ساخت رابط‌های کاربری پیچیده و مدرن.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- بخش دوره‌های رایگان -->
+    <section class="courses" id="courses">
+        <div class="container">
+            <h2 class="section-title">دوره‌های رایگان آموزش برنامه‌نویسی</h2>
+            <div class="course-grid">
+                <div class="course-card" data-course="beginner">
+                    <div class="course-header">
+                        <h3>دوره مبتدی - رایگان</h3>
+                        <p>مناسب برای شروع از صفر</p>
+                    </div>
+                    <div class="course-body">
+                        <ul>
+                            <li>آموزش HTML و CSS پایه</li>
+                            <li>آشنایی با مفاهیم وب</li>
+                            <li>ساخت اولین وبسایت</li>
+                            <li>ریسپانسیو کردن سایت</li>
+                            <li>پروژه عملی کوچک</li>
+                        </ul>
+                        <button class="details-button" data-course="beginner">مشاهده جزییات دوره</button>
+                    </div>
+                </div>
+                <div class="course-card" data-course="intermediate">
+                    <div class="course-header">
+                        <h3>دوره متوسط - رایگان</h3>
+                        <p>توسعه مهارت‌های فرانت‌اند</p>
+                    </div>
+                    <div class="course-body">
+                        <ul>
+                            <li>JavaScript پیشرفته</li>
+                            <li>کار با API ها</li>
+                            <li>فریمورک‌های CSS</li>
+                            <li>ابزارهای توسعه</li>
+                            <li>پروژه عملی متوسط</li>
+                        </ul>
+                        <button class="details-button" data-course="intermediate">مشاهده جزییات دوره</button>
+                    </div>
+                </div>
+                <div class="course-card" data-course="advanced">
+                    <div class="course-header">
+                        <h3>دوره پیشرفته - رایگان</h3>
+                        <p>تبدیل شدن به توسعه‌دهنده حرفه‌ای</p>
+                    </div>
+                    <div class="course-body">
+                        <ul>
+                            <li>React.js کامل</li>
+                            <li>مدیریت وضعیت</li>
+                            <li>تست‌نویسی</li>
+                            <li>بهینه‌سازی performance</li>
+                            <li>پروژه بزرگ عملی</li>
+                        </ul>
+                        <button class="details-button" data-course="advanced">مشاهده جزییات دوره</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- مودال دوره‌ها -->
+    <div class="modal-overlay" id="courseModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="modalTitle">دوره مبتدی برنامه‌نویسی وب</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <div id="lessonList">
+                    <h3>سرفصل‌های این دوره:</h3>
+                    <div class="lesson-list" id="lessonsContainer">
+                        <!-- دروس از طریق جاوااسکریپت پر می‌شوند -->
+                    </div>
+                </div>
+                <div id="lessonDetail" class="lesson-detail">
+                    <!-- محتوای درس از طریق جاوااسکریپت پر می‌شود -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- فوتر -->
+    <footer id="contact">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>WebCraft Academy</h3>
+                    <p>ما باور داریم که آموزش برنامه‌نویسی باید برای همه رایگان و در دسترس باشد. تمام دوره‌های ما کاملاً رایگان ارائه می‌شوند.</p>
+                    <div class="social-icons">
+                        <a href="#" aria-label="تلگرام"><i class="fab fa-telegram"></i></a>
+                        <a href="#" aria-label="اینستاگرام"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="توییتر"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="یوتیوب"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>لینک‌های سریع</h3>
+                    <a href="#home">خانه</a>
+                    <a href="#tech">تکنولوژی‌ها</a>
+                    <a href="#courses">دوره‌های رایگان</a>
+                    <a href="#about">درباره ما</a>
+                    <a href="#contact">تماس با ما</a>
+                </div>
+                <div class="footer-column">
+                    <h3>تماس با ما</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> تهران، خیابان آزادی</p>
+                    <p><i class="fas fa-phone"></i> ۰۲۱-۱۲۳۴۵۶۷۸</p>
+                    <p><i class="fas fa-envelope"></i> info@webcraft.academy</p>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>© 2023 WebCraft Academy. تمامی دوره‌ها به صورت رایگان ارائه می‌شوند.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // داده‌های دوره‌ها
+        const coursesData = {
+            beginner: {
+                title: "دوره مبتدی برنامه‌نویسی وب - رایگان",
+                lessons: [
+                    {
+                        id: "html-basics",
+                        title: "مقدمات HTML",
+                        duration: "۲ ساعت",
+                        content: `
+                            <button class="back-to-lessons"><i class="fas fa-arrow-right"></i> بازگشت به لیست دروس</button>
+                            <div class="lesson-content">
+                                <h3>مقدمات HTML</h3>
+                                <p>HTML زبان نشانه‌گذاری استاندارد برای ایجاد صفحات وب است. در این درس با مبانی اولیه HTML آشنا می‌شوید.</p>
+                                
+                                <h4>ساختار اصلی یک سند HTML:</h4>
+                                <div class="code-block">
+&lt;!DOCTYPE html&gt;
+&lt;html lang="fa"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;title&gt;عنوان صفحه&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;این یک عنوان است&lt;/h1&gt;
+    &lt;p&gt;این یک پاراگراف است.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+                                </div>
+                                
+                                <h4>تگ‌های مهم HTML:</h4>
+                                <ul>
+                                    <li><strong>&lt;h1&gt; تا &lt;h6&gt;:</strong> برای عناوین</li>
+                                    <li><strong>&lt;p&gt;:</strong> برای پاراگراف‌ها</li>
+                                    <li><strong>&lt;a&gt;:</strong> برای لینک‌ها</li>
+                                    <li><strong>&lt;img&gt;:</strong> برای تصاویر</li>
+                                    <li><strong>&lt;div&gt;:</strong> برای تقسیم‌بندی صفحه</li>
+                                </ul>
+                            </div>
+                        `
+                    },
+                    {
+                        id: "css-intro",
+                        title: "آشنایی با CSS",
+                        duration: "۱.۵ ساعت",
+                        content: `
+                            <button class="back-to-lessons"><i class="fas fa-arrow-right"></i> بازگشت به لیست دروس</button>
+                            <div class="lesson-content">
+                                <h3>آشنایی با CSS</h3>
+                                <p>CSS برای استایل‌دهی به عناصر HTML استفاده می‌شود. در این درس با روش‌های مختلف اعمال CSS آشنا می‌شوید.</p>
+                                
+                                <h4>روش‌های اعمال CSS:</h4>
+                                <ol>
+                                    <li>Inline CSS (مستقیم روی تگ)</li>
+                                    <li>Internal CSS (درون تگ style)</li>
+                                    <li>External CSS (فایل جداگانه)</li>
+                                </ol>
+                                
+                                <h4>مثال انتخاب‌گرهای CSS:</h4>
+                                <div class="code-block">
+/* انتخاب‌گر تگ */
+p {
+    color: blue;
+    font-size: 16px;
+}
+
+/* انتخاب‌گر کلاس */
+.text-red {
+    color: red;
+}
+
+/* انتخاب‌گر ID */
+#header {
+    background: #f0f0f0;
+}
+                                </div>
+                            </div>
+                        `
+                    }
+                ]
+            },
+            intermediate: {
+                title: "دوره متوسط برنامه‌نویسی وب - رایگان",
+                lessons: [
+                    {
+                        id: "js-fundamentals",
+                        title: "مبانی JavaScript",
+                        duration: "۳ ساعت",
+                        content: `<button class="back-to-lessons"><i class="fas fa-arrow-right"></i> بازگشت به لیست دروس</button><div class="lesson-content"><h3>مبانی JavaScript</h3><p>جاوااسکریپت زبان برنامه‌نویسی وب است که به صفحات وب تعاملی بودن می‌دهد.</p></div>`
+                    }
+                ]
+            },
+            advanced: {
+                title: "دوره پیشرفته برنامه‌نویسی وب - رایگان",
+                lessons: [
+                    {
+                        id: "react-intro",
+                        title: "معرفی React.js",
+                        duration: "۲.۵ ساعت",
+                        content: `<button class="back-to-lessons"><i class="fas fa-arrow-right"></i> بازگشت به لیست دروس</button><div class="lesson-content"><h3>معرفی React.js</h3><p>React یک کتابخانه جاوااسکریپت برای ساخت رابط‌های کاربری است.</p></div>`
+                    }
+                ]
+            }
+        };
+
+        // متغیرهای DOM
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.getElementById('navLinks');
+        const courseModal = document.getElementById('courseModal');
+        const closeModal = document.getElementById('closeModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const lessonsContainer = document.getElementById('lessonsContainer');
+        const lessonDetail = document.getElementById('lessonDetail');
+        const lessonList = document.getElementById('lessonList');
+        const detailsButtons = document.querySelectorAll('.details-button');
+        
+        // منوی موبایل
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            const icon = menuToggle.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+            
+            // بستن منو با کلیک روی لینک‌ها در موبایل
+            if (navLinks.classList.contains('active')) {
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinks.classList.remove('active');
+                        icon.classList.add('fa-bars');
+                        icon.classList.remove('fa-times');
+                    });
+                });
+            }
+        });
+        
+        // باز کردن مودال دوره
+        detailsButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const courseType = button.getAttribute('data-course');
+                openCourseModal(courseType);
+            });
+        });
+        
+        // بستن مودال
+        closeModal.addEventListener('click', () => {
+            courseModal.style.display = 'none';
+        });
+        
+        // بستن مودال با کلیک خارج از آن
+        courseModal.addEventListener('click', (e) => {
+            if (e.target === courseModal) {
+                courseModal.style.display = 'none';
+            }
+        });
+        
+        // بستن مودال با کلید ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && courseModal.style.display === 'flex') {
+                courseModal.style.display = 'none';
+            }
+        });
+        
+        // تابع باز کردن مودال دوره
+        function openCourseModal(courseType) {
+            const course = coursesData[courseType];
+            modalTitle.textContent = course.title;
+            lessonsContainer.innerHTML = '';
+            lessonDetail.innerHTML = '';
+            lessonDetail.classList.remove('active');
+            lessonList.style.display = 'block';
+            
+            // نمایش لیست دروس
+            course.lessons.forEach((lesson, index) => {
+                const lessonItem = document.createElement('div');
+                lessonItem.className = 'lesson-item';
+                lessonItem.innerHTML = `
+                    <h4>درس ${index + 1}: ${lesson.title} <span>${lesson.duration}</span></h4>
+                    <p>برای مشاهده محتوای این درس کلیک کنید</p>
+                `;
+                lessonItem.addEventListener('click', () => showLessonDetail(lesson.content));
+                lessonsContainer.appendChild(lessonItem);
+            });
+            
+            courseModal.style.display = 'flex';
+            // اسکرول به بالای مودال
+            courseModal.querySelector('.modal').scrollTop = 0;
+        }
+        
+        // تابع نمایش محتوای درس
+        function showLessonDetail(content) {
+            lessonDetail.innerHTML = content;
+            lessonDetail.classList.add('active');
+            lessonList.style.display = 'none';
+            
+            // دکمه بازگشت
+            const backButton = lessonDetail.querySelector('.back-to-lessons');
+            if (backButton) {
+                backButton.addEventListener('click', () => {
+                    lessonDetail.classList.remove('active');
+                    lessonList.style.display = 'block';
+                    // اسکرول به بالای لیست دروس
+                    document.querySelector('.modal-content').scrollTop = 0;
+                });
+            }
+            
+            // اسکرول به بالا
+            lessonDetail.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // انیمیشن اسکرول برای عناصر
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        // مشاهده عناصر برای انیمیشن
+        document.querySelectorAll('.tech-card, .course-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+        
+        // انیمیشن هدر هنگام اسکرول
+        window.addEventListener('scroll', () => {
+            const header = document.querySelector('header');
+            const userBar = document.querySelector('.user-bar');
+            
+            if (window.scrollY > 100) {
+                header.style.boxShadow = '0 4px 20px rgba(67, 97, 238, 0.15)';
+                if (window.innerWidth > 768) {
+                    userBar.style.transform = 'translateY(-100%)';
+                }
+            } else {
+                header.style.boxShadow = '0 4px 20px rgba(67, 97, 238, 0.1)';
+                userBar.style.transform = 'translateY(0)';
+            }
+        });
+        
+        // اسموث اسکرول برای لینک‌های منو
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    // بستن منو در موبایل
+                    navLinks.classList.remove('active');
+                    menuToggle.querySelector('i').classList.add('fa-bars');
+                    menuToggle.querySelector('i').classList.remove('fa-times');
+                    
+                    // محاسبه موقعیت اسکرول با در نظر گرفتن نوار کاربر
+                    const headerHeight = document.querySelector('header').offsetHeight;
+                    const userBarHeight = document.querySelector('.user-bar').offsetHeight;
+                    const offset = headerHeight + userBarHeight + 10;
+                    
+                    window.scrollTo({
+                        top: targetElement.offsetTop - offset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // افکت تایپ برای عنوان هیرو
+        const heroTitle = document.querySelector('.hero-text h1');
+        const originalText = heroTitle.textContent;
+        heroTitle.textContent = '';
+        
+        let i = 0;
+        function typeWriter() {
+            if (i < originalText.length) {
+                heroTitle.textContent += originalText.charAt(i);
+                i++;
+                setTimeout(typeWriter, 50);
+            }
+        }
+        
+        // شروع تایپ بعد از لود صفحه
+        window.addEventListener('load', () => {
+            setTimeout(typeWriter, 500);
+        });
+        
+        // بهبود عملکرد لمسی در موبایل
+        document.addEventListener('touchstart', function() {}, {passive: true});
+    </script>
+</body>
+</html>
